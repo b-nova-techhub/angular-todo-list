@@ -1,0 +1,11 @@
+.index {
+  flex: 1 1 50px;
+}
+
+.content {
+  flex: 1 1 100%;
+}
+
+.done {
+  text-decoration: line-through;
+}

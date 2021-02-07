@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ToDo } from '@models/ToDo'
+import { ToDoEvent } from '@models/ToDoEvent';
+import { ToDoService } from 'src/app/services/to-do.service';
+import { ToDoEventType } from '../enums/ToDoEventType';
 @Component({
   selector: 'app-to-dos',
   templateUrl: './to-dos.component.html',
@@ -10,45 +14,29 @@ export class ToDosComponent implements OnInit {
   toDos:ToDo[] = [];
   inputToDoText:string = 'abc';
 
-  constructor() { }
+  constructor(private toDoService:ToDoService,
+     private router:Router) { }
 
   ngOnInit(): void {
-    this.toDos = [
-      {
-        content: 'Get tea',
-        completed: true
-      },
-      {
-        content: 'Write blog post',
-        completed: false
-      },
-      {
-        content: 'Publish blog post',
-        completed: false
-      }
-    ]
+    this.toDos=this.toDoService.getToDos();
   }
 
-  toggleCompleted(indexToUpdate:number):void {
-    this.toDos.map((item,index) => {
-      if (index == indexToUpdate) {
-        item.completed = !item.completed;
+  handleToDoEvent(toDoEvent:ToDoEvent){
+    if(toDoEvent.type === ToDoEventType.COMPLETE){
+      this.toDoService.toggleCompleted(toDoEvent.index);
+      if(this.toDoService.areAllToDosCompleted()){
+        this.router.navigateByUrl('/success');
       }
-    })
-  }
-
-  deleteToDo(indexToDelete:number):void {
-    this.toDos = this.toDos.filter((item,index) => index !== indexToDelete);
+    } else if (toDoEvent.type === ToDoEventType.DELETE){
+      this.toDos = this.toDoService.deleteToDo(toDoEvent.index);
+    }
   }
 
   addToDo(){
-    this.toDos.push(
-      {
+    this.toDoService.addToDo({
         content: this.inputToDoText,
         completed: false
-      }
-    )
+      });
     this.inputToDoText = "";
   }
-
 }

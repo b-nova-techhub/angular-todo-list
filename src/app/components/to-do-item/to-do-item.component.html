@@ -1,0 +1,3 @@
+<div class="index">{{ i }}</div>
+<div class="content" [class.done]="toDo.completed" (click)="toggleCompleted(i)">{{ toDo.content | superCoolPipe }}</div>
+<button class="delete" (click)="deleteToDo(i)">Delete</button>
